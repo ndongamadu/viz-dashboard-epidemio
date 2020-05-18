@@ -27,6 +27,8 @@ h2 {
 
 main{
 	opacity: 0;
+	/* padding: 0 0 15px 15px; */
+	padding: 0 5px 0 5px;
 }
 
 .masterhead {
@@ -48,11 +50,104 @@ main{
 .sidebar {
 	flex: 0 0 250px;
 	border-right: 1px solid #EBEBEB;
-	padding: 0 0 15px;
+	
+	/*background-color: #EBEBEB; */
+}
+
+.filters {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
 
 .master-content {
-	padding: 0 15px;
+	flex: 1 1 auto;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding: 0 0 0 10px;
+}
+
+.key-Figures {
+	display: flex;
+	justify-content: center;
+}
+
+
+.keyfigure {
+	flex: 1 0 auto;
+
+}
+
+.inner {
+	margin-bottom: 10px;
+	padding-top: 10px;
+	display: flex;
+	align-items: end;
+}
+
+.inner .title{
+	padding-top: 5px;
+	padding-bottom: 10px;
+	font-size: 21px;
+	line-height: 21px;
+
+}
+
+.num {
+	/**color: #000; **/
+	font-size: 40px;
+	line-height: 40px;
+	margin-right: 5px;
+}
+
+.dateRange {
+	margin-bottom: 5px;
+}
+
+.selection {
+	font-size: 14px;
+	text-align: left;
+	widht: 150px;
+}
+
+.clarification {
+	font-size: 10px;
+	text-align: justify;
+	margin: 0 5px 5px 0;
+	font-style: italic;
+}
+
+.rightSide {
+	display: flex;
+	flex-direction: column;
+}
+
+#map{
+	height: 400px;
+}
+
+.district{
+	grid-column: 1 / -1;
+}
+
+
+
+.chart-header {
+    background-color: #EBEBEB;
+    display: inline-block;
+    margin-bottom: 0;
+    padding: 5px;
+    width: 100%;
+}
+.chart-header h4 span {
+    font-size: 15px;
+    text-transform: uppercase;
+}
+
+.chart-container {
+    border: 1px solid #e6e7e8;
+    padding: 5px 0 10px;
+    margin-bottom: 15px;
 }
 
 footer {
@@ -62,12 +157,13 @@ footer {
 }
 
 @media only screen and (max-width: 768px) {
-	.master {
+	.master, .master-content {
 		flex-direction: column;
 	}
 
 	.master-content {
 		padding: 0 ;
+		display: flex;
 	}
 	.sidebar {
 		flex: 1 1 auto;
