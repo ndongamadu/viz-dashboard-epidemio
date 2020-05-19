@@ -9,8 +9,8 @@ $( document ).ready(function() {
   // let maladiesSelectionnees = ['Paludisme Grave'];
   let maladiesSelectionnees = ['Covid-19', 'Paludisme Grave', 'Méningite'];
   
-  let weekTo = 1,
-      weekFrom = 6;
+  let weekFrom = 1,
+      weekTo = 16;
   let weekMax = 0;
 
   let weekScale = ['x'];
@@ -21,6 +21,10 @@ $( document ).ready(function() {
   let regionDim = {};
   let regionScale = [];
   let regionAndDistrictsMap = {};
+  let regionChartData;
+
+  let map ;
+  let geojson;
 
   function getData() {
     Promise.all([
@@ -33,6 +37,12 @@ $( document ).ready(function() {
         d['NSEM'] = Number(d['NSEM']);
         d['DEBUT'] = moment(d['DEBUT'], ['DD-MMM-YYYY']);
       });
+
+      weekMax = d3.max(epidemioData, function(d){
+        return d['NSEM'];
+      });
+
+
       data[1].forEach( function(element, index) {
         maladiesList.push(element.Maladies);
       });
@@ -47,6 +57,7 @@ $( document ).ready(function() {
       });
 
       regionScale.sort();
+      regionScale.unshift('x');
 
       regionAndDistrictsMap = createRegionDistrictMap(regionScale, epidemioData);
 
@@ -66,60 +77,60 @@ $( document ).ready(function() {
   }
 
   function filterData (argument) {
-    var moisDebut = $('#from').val(),
-        moisFin = $('#to').val();
 
-
-    filteredEpidemioData = epidemioData.filter(function(d){
-      return d['NSEM'] >= weekTo &&
-              d['NSEM'] <= weekFrom;
+    regionChartData = filteredEpidemioData = epidemioData.filter(function(d){
+      return d['NSEM'] >= weekFrom &&
+              d['NSEM'] <= weekTo;
     });
 
-    for (var i = weekTo; i <= weekFrom ; i++) {
-      weekScale.push(i);
+    for (var i = weekFrom; i <= weekTo ; i++) {
+      weekScale.push('s'+i);
     }
 
+
     filteredEpidemioData = filteredEpidemioData.filter(filterRegions);
+
 
   }//filterData
 
   // Creer les filtres du sidebar
   function filtresSetter (argument) {
-    var listMois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai',
-                    'Juin', 'Juillet', 'Aout', 'Septembre', 
-                    'Octobre', 'Novembre', 'Decembre'];
+
+    var semaines = [];
+    for (var i = 1; i <= weekMax; i++) {
+      semaines.push("semaine "+i);
+    };
 
     // Months dropdowns
     var dropdwnMoisDe = d3.select("#to")
         .selectAll("option")
-        .data(listMois)
+        .data(semaines)
         .enter().append("option")
           .text(function(d){ return d; })
-          .attr("value", function(d){ return d; });
+          .attr("value", function(d){
+            return d;
+          });
     
     $('#to').multipleSelect({
       minimumCountSelected: 1,
       displayValues: true
     });
 
-    $("#to").multipleSelect('setSelects', ['Mars']);
-    $("#to").multipleSelect('refresh');
 
     var dropdwnMoisFrom = d3.select("#from")
         .selectAll("option")
-        .data(listMois)
+        .data(semaines)
         .enter().append("option")
           .text(function(d){ return d; })
-          .attr("value", function(d){ return d; });
+          .attr("value", function(d){
+            return d;
+          });
     
     $('#from').multipleSelect({
       minimumCountSelected: 1,
       displayValues: true
     });
 
-
-    $("#from").multipleSelect('setSelects', ['Janvier']);
-    $("#from").multipleSelect('refresh');
 
     // dropdown maladies
 
@@ -136,14 +147,16 @@ $( document ).ready(function() {
       selectAll: false
     });
 
-    $("#selectMaladies").multipleSelect('setSelects', maladiesSelectionnees);
-    $("#selectMaladies").multipleSelect('refresh');
 
     // dropdown region
+    var regs = [];
+    for (var i = 1; i < regionScale.length; i++) {
+      regs.push(regionScale[i]);
+    };
 
     var dropdwnRegion = d3.select("#selectRegion")
         .selectAll("option")
-        .data(regionScale)
+        .data(regs)
         .enter().append("option")
           .text(function(d){ return d; })
           .attr("value", function(d){ return d; });
@@ -151,11 +164,8 @@ $( document ).ready(function() {
     $("#selectRegion").multipleSelect({
       minimumCountSelected: 3,
       displayValues: true,
-      selectAll: false
+      selectAll: true
     });
-
-    $("#selectRegion").multipleSelect('setSelects', regionSelected);
-    $("#selectRegion").multipleSelect('refresh');
 
     
   }//filtresSetter
@@ -214,55 +224,48 @@ $( document ).ready(function() {
   }//getMaladieData
 
   function drawRegionChart () {
-    var subData = epidemioData.filter(function(d){
-      return d['NSEM'] >= weekTo &&
-              d['NSEM'] <= weekFrom;
-    });
 
     var deathArr = [],
         casArr = [];
 
     for (var i = 0; i < maladiesSelectionnees.length; i++) {
-      var data = getRegionData(maladiesSelectionnees[i], subData);
+      var data = getRegionData(maladiesSelectionnees[i]);
 
-      var deaths = [maladiesSelectionnees[i]],
-          cas = {};
-      for (var j = 0; j < regionScale.length; j++) {
+      var cas = [maladiesSelectionnees[i]],
+          deaths = {};
+      
+      for (var j = 1; j < regionScale.length; j++) {
         data.forEach( function(reg) {
           if (reg.key === regionScale[j]) {
-            deaths.push(reg.value.death) ;
-            cas[regionScale[j]] = reg.value.cas ;
+            cas.push(reg.value.cas) ;
+            deaths[regionScale[j]] = reg.value.death ;
           }
         });
       }
       deathArr.push(deaths);
       casArr.push(cas);
     }
-    regionScale.unshift('x');
-    deathArr.unshift(regionScale);
-    createBarChart(deathArr);
+    casArr.unshift(regionScale);
+    
+    createBarChart(casArr);
 
-    var total = 0;
+    // var total = 0;
     for (var i = 1; i < regionScale.length; i++) {
       var som = 0;
           
-      for (var k = 0; k < casArr.length; k++) {
-        som += casArr[k][regionScale[i]];
+      for (var k = 0; k < deathArr.length; k++) {
+        som += deathArr[k][regionScale[i]];
       }
-      regionDim[regionScale[i]] = {somme: som};
-      total += som;
+      regionDim[regionScale[i]] = som;//{somme: som};
+      // total += som;
 
-    }
-
-    for (k in regionDim) {
-      regionDim[k] = ((regionDim[k].somme/total)*100);
     }
 
 
   }// drawRegionChart
 
 
-  function getRegionData (mld, data) {
+  function getRegionData (mld) {
     var data = d3.nest()
         // .key(function(d) { return d['NSEM']; })
         .key(function(d){ return d['REGION']; })
@@ -272,30 +275,35 @@ $( document ).ready(function() {
               death : d3.sum(v, function(d){ return Number(d[mld + " " +'Décès']); })
             } 
           })
-        .entries(data);
+        .entries(regionChartData);
+    
     return data;
   } //getRegionData
 
 
   function mapClicked (e) {
-    console.log(e) 
+    var layer = e.target ;
+    // console.log(layer.Popup.getContent()) 
+    console.log(layer.feature.properties.ADM1_FR)
   }
 
   function onEachFeature(feature, layer) {
       layer.on({
-          click: mapClicked(feature)
-      });
+          mouseover: highlightFeature,
+          mouseout: resetHighlight,
+          click: mapClicked
+      }).bindPopup(feature.properties.ADM1_FR);
   }
 
   function getColor(region) {
     var d = regionDim[region];
-    return d > 1000 ? '#800026' :
-            d > 500  ? '#BD0026' :
-            d > 200  ? '#E31A1C' :
-            d > 100  ? '#FC4E2A' :
-            d > 50   ? '#FD8D3C' :
-            d > 20   ? '#FEB24C' :
-            d > 10   ? '#FED976' :
+    return d > 100 ? '#800026' :
+            d > 80  ? '#BD0026' :
+            d > 60  ? '#E31A1C' :
+            d > 50  ? '#FC4E2A' :
+            d > 30   ? '#FD8D3C' :
+            d > 10   ? '#FEB24C' :
+            d > 5   ? '#FED976' :
                         '#FFEDA0';
   }
 
@@ -313,7 +321,7 @@ $( document ).ready(function() {
 
   function createMap () {
 
-    var map = L.map('map',
+    map = L.map('map',
     {
         maxZoom: 20,
         // minZoom: 2
@@ -323,17 +331,48 @@ $( document ).ready(function() {
         attribution: '<a href="http://mapbox.com">Mapbox</a>'
     }).addTo(map); 
     
-    var feature = L.geoJson(geodata,
+    geojson = L.geoJson(geodata,
               { 
                 style:style,
-                // onEachFeature: onEachFeature
+                onEachFeature: onEachFeature
               }).addTo(map);
 
-    map.fitBounds(feature.getBounds());
+    map.fitBounds(geojson.getBounds());
 
   } // createMap()
 
 
+  function updateMap () {
+    map.removeLayer(L.geoJson);
+
+    geojson = L.geoJson(geodata, {
+                style: style,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+  } //updateMap
+
+
+  function highlightFeature(e) {
+      var layer = e.target;
+
+      layer.setStyle({
+          weight: 5,
+          color: '#666',
+          dashArray: '',
+          fillOpacity: 0.7
+      });
+      layer.openPopup();
+
+      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          layer.bringToFront();
+      }
+  }
+
+  function resetHighlight(e) {
+      geojson.resetStyle(e.target);
+      e.target.closePopup();
+
+  }
   function drawDistrictCharts () {
     $('.charts-districts').html('');
 
@@ -412,11 +451,16 @@ $( document ).ready(function() {
     var regs = $('#selectRegion').val();
     regs===undefined ? null : regionSelected = regs;
     
+    weekTo = ($('#to').val()).split(" ")[1];
+    weekFrom = ($('#from').val()).split(" ")[1];
+
+
     filterData();
 
     drawCharts();
     drawRegionChart();
     drawDistrictCharts();
+    updateMap();
 
   }//update
 
@@ -427,8 +471,19 @@ $( document ).ready(function() {
     drawCharts();
     drawRegionChart();
     createMap();
-
     drawDistrictCharts();
+
+    $("#from").val("semaine "+weekFrom);
+    $("#from").multipleSelect('refresh');
+
+    $("#to").val("semaine "+weekTo);
+    $("#to").multipleSelect('refresh');
+
+    $("#selectMaladies").val(maladiesSelectionnees);
+    $("#selectMaladies").multipleSelect('refresh');
+
+    $("#selectRegion").val(regionSelected);
+    $("#selectRegion").multipleSelect('refresh');
 
     //remove loader and show vis
     $('.loader').hide();

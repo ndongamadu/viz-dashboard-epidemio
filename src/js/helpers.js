@@ -1,6 +1,6 @@
 var colorPattern = ['#1ebfb3', '#f2645a', '#007ce1', '#9c27b0', '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
 
-function createLineCharts(columns, type) {
+function createLineCharts(columns, type, title) {
 	timeseriesChart = c3.generate({
     padding: {
       top: 10,
@@ -10,11 +10,12 @@ function createLineCharts(columns, type) {
     size: { height: 190},
     bindto: '.' + type,
     title: {
-  		text: 'Number of Confirmed Cases Over Time',
-  		// position: 'upper-left',
+  		text: title,
+  		position: 'upper-left',
 		},
 		data: {
 			x: 'x',
+      type: 'line',
 			columns: columns,
 		},
     color: {
@@ -24,8 +25,8 @@ function createLineCharts(columns, type) {
 			x: {
 				type: 'category',
 				tick: {
-				  format: '%-m/%-d/%y',
-          center: false,
+				  // format: ,
+          centered: false,
           outer: false
 				}
 			},
@@ -59,7 +60,8 @@ function createBarChart (data) {
               tick: {
                 outer: false,
                 multiline: false,
-                // rotate: 12
+                rotate: 12,
+                center: true
               }
           },
           y: {
