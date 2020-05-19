@@ -2,7 +2,7 @@ $( document ).ready(function() {
   const file = 'data/tloh_2020.csv';
   let dataLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-i1s7BGITTkdaWOvZIHcLhGfQHCPKooh9wAoRIkUX_bb5fjn0Q-PXRpJonCpC3G3q_jrwKbYJezrY/pub?gid=0&single=true&output=csv';
   let maladiesListLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-i1s7BGITTkdaWOvZIHcLhGfQHCPKooh9wAoRIkUX_bb5fjn0Q-PXRpJonCpC3G3q_jrwKbYJezrY/pub?gid=124026934&single=true&output=csv';
-  let geodataLink = 'data/burkina.json';
+  let geodataLink = 'data/bf.json';
   let epidemioData, geodata;
   let maladiesList = [];
   
@@ -17,7 +17,7 @@ $( document ).ready(function() {
 
   let filteredEpidemioData;
 
-  let regionSelected = ['Centre', 'Est'];
+  let regionSelected = ['Centre'];
   let regionDim = {};
   let regionScale = [];
   let regionAndDistrictsMap = {};
@@ -46,7 +46,7 @@ $( document ).ready(function() {
       data[1].forEach( function(element, index) {
         maladiesList.push(element.Maladies);
       });
-      geodata = topojson.feature(data[2], data[2].objects.burkina);
+      geodata = topojson.feature(data[2], data[2].objects.burkina2);
 
       var regions = epidemioData.map(function(d){
         return d['REGION'];
@@ -283,8 +283,7 @@ $( document ).ready(function() {
 
   function mapClicked (e) {
     var layer = e.target ;
-    // console.log(layer.Popup.getContent()) 
-    console.log(layer.feature.properties.ADM1_FR)
+    drawDistrictCharts(layer.feature.properties.ADM1_FR)
   }
 
   function onEachFeature(feature, layer) {
@@ -363,9 +362,6 @@ $( document ).ready(function() {
       });
       layer.openPopup();
 
-      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-          layer.bringToFront();
-      }
   }
 
   function resetHighlight(e) {
@@ -373,26 +369,61 @@ $( document ).ready(function() {
       e.target.closePopup();
 
   }
-  function drawDistrictCharts () {
-    $('.charts-districts').html('');
 
-    regionSelected.forEach( function(region) {
-      $('.charts-districts').append('<h2>Nombre de cas et de décès par district ( '+region+' )</h2>');
+  function doNotDraw (data) {
+    var bool = true ;
 
-      $('.charts-districts').append('<div class="row" id="'+region+'"></div>');
-      districts = regionAndDistrictsMap[region].districts;
-      districts.sort();
-      for (var i = 0; i < districts.length; i++) {
-        var data = getDistrictDataAll(districts[i]);
-        // console.log(data)
-        var deathName = "chart_deces"+i;
-        var casName = "chart_cas"+i;
+    var death = data[0],
+        cas = data[1];
+    var lenDeathArr = death.length - 1;
+    var lenCasArr = cas.length - 1;
 
-        $('#'+region).append('<div class="districtChart col-md-4"><div class="chart-header"><h4><span>District '+districts[i]+'</span></h4></div><div class="chart-container"><div id="'+deathName+'"></div><div id="'+casName+'"></div></div></div>');
-        createDistrictDecesChart(data[0], deathName);
-        createDistrictCasChart(data[1], casName);
-      } 
-    });
+    for (var i = 1; i < death.length; i++) {
+      death[i].length == 1 ? lenDeathArr-- : '';
+    }
+
+    for (var i = 1; i < cas.length; i++) {
+      cas[i].length == 1 ? lenCasArr-- : '';
+    }
+    (lenDeathArr == 0 && lenCasArr == 0) ? bool = false : '';
+    
+    return bool;
+  } //doNotDraw
+
+
+  function drawDistrictCharts (region) {
+    region == undefined ? region = 'Centre' : '';
+    
+    $('.charts-districts').html('<h2>Région: '+region+'</h2>');
+    $('.charts-districts').append('<div class="row" id="'+region+'"></div>');
+    
+    districts = regionAndDistrictsMap[region].districts;
+    
+    districts.sort();
+
+    for (var i = 0; i < districts.length; i++) {
+      var data = getDistrictDataAll(districts[i]);
+      var deathName = "chart_deces"+i;
+      var casName = "chart_cas"+i;
+
+      $('#'+region).append('<div class="districtChart col-md-4"><div class="chart-header"><h4><span>District '+districts[i]+'</span></h4></div><div class="chart-container"><div id="'+casName+'"></div><div id="'+deathName+'"></div></div></div>');
+      createDistrictDecesChart(data[0], deathName);
+      createDistrictCasChart(data[1], casName);
+
+      // if (!doNotDraw(data)) {
+      //   console.log("region "+region)
+      //   console.log(data);
+      //   $('#'+region).html('<div><h3>Les graphes sont vides.</h3></div>');
+      // } else {
+      //   var deathName = "chart_deces"+i;
+      //   var casName = "chart_cas"+i;
+
+      //   $('#'+region).append('<div class="districtChart col-md-4"><div class="chart-header"><h4><span>District '+districts[i]+'</span></h4></div><div class="chart-container"><div id="'+casName+'"></div><div id="'+deathName+'"></div></div></div>');
+      //   createDistrictDecesChart(data[0], deathName);
+      //   createDistrictCasChart(data[1], casName);
+      // }
+
+    }
 
   } //drawDistrictCharts
 
@@ -409,15 +440,16 @@ $( document ).ready(function() {
 
     for (var i = 0; i < maladiesSelectionnees.length; i++) {
        var data = getDistrictData(subdata, maladiesSelectionnees[i]);
-       allDecesArr.push(data[0]);
+       allDecesArr.push(data[1]);
        allCasArr.push(data[0]);
      } 
 
     return [allDecesArr, allCasArr];
+    
   }//getDistrictDataAll
 
 
-  function getDistrictData (data, mld) {
+  function getDistrictData (dataArg, mld) {
     var data = d3.nest()
         .key(function(d){ return d['NSEM']; })
         .rollup(function(v){ 
@@ -426,7 +458,7 @@ $( document ).ready(function() {
               death : d3.sum(v, function(d){ return Number(d[mld + " " +'Décès']); })
             } 
           })
-        .entries(data);
+        .entries(dataArg);
 
     var casArr = [],
         deathArr = [];

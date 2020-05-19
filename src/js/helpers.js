@@ -141,13 +141,14 @@ function createDistrictDecesChart (data, place) {
             // show: false,
             tick: {
               count: 3,
-              format: d3.format('.2s')
+              // format: d3.format('.2s')
             }
           }
       },
       legend: { 
         show: false
-      }
+      },
+      transition: { duration: 300 }
   });
 } //createDistrictBarChart
 
@@ -181,13 +182,14 @@ function createDistrictCasChart (data, place) {
             // show: false,
             tick: {
               count: 3,
-              format: d3.format('.2s')
+              // format: d3.format('.2s')
             }
           }
       },
       legend: { 
         show: false
-      }
+      },
+      transition: { duration: 300 }
   });
 } //createDistrictCasChart
 
