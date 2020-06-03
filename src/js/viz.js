@@ -390,10 +390,29 @@ $( document ).ready(function() {
     return bool;
   } //doNotDraw
 
+  function checkedDistrictData (dist) {
+    var subdata = filteredEpidemioData.filter(function(d){
+      return d['DISTRICT'] == dist ;
+    }); 
+    var mld = 'Paludisme Grave';
+
+    var casData = subdata.map(function(d){
+      return d[mld + " " +'Cas'];
+    });
+    var deathData = subdata.map(function(d){
+      return d[mld + " " +'Cas'];
+    });
+
+    console.log(casData)
+    console.log(deathData);
+  }//checkedDistrictData
 
   function drawDistrictCharts (region) {
     region == undefined ? region = 'Centre' : '';
-    
+    var data = regionChartData.filter(function(d){
+      return d['REGION'] == region;
+    });
+
     $('.charts-districts').html('<h2>Région: '+region+'</h2>');
     $('.charts-districts').append('<div class="row" id="'+region+'"></div>');
     
@@ -431,6 +450,7 @@ $( document ).ready(function() {
     var subdata = filteredEpidemioData.filter(function(d){
       return d['DISTRICT'] == district ;
     });
+    console.log(subdata)
 
     var allDecesArr = [],
         allCasArr = [];
@@ -470,6 +490,17 @@ $( document ).ready(function() {
       casArr.push(element.value.cas);
       deathArr.push(element.value.death);
     });
+
+    var cpteCas = 1;
+    for (var i = 1; i < casArr.length; i++) {
+      casArr[i]==0 ? cpteCas++ : '';
+    }
+
+    var cpteDeath = 1;
+    for (var i = 1; i < deathArr.length; i++) {
+      deathArr[i]==0 ? cpteDeath++ : '';
+    }
+
     return [casArr, deathArr];
   } //getDistrictData
 

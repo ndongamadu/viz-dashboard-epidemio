@@ -297,3 +297,16 @@ function get_calendar (year, month) {
 };
 
 
+function getDistricts (data) {
+  var districts = [];
+  var dists = data.map(function(d){
+    return d['DISTRICT'];
+  });
+
+  dists.forEach( function(element, index) {
+    districts.includes(element) ? '' : districts.push(element);
+  });
+  return districts;
+} //getDistricts
+
+
