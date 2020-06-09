@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>BF dashboard epidemiologique</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link rel='icon' type='image/png' href='https://data.humdata.org/images/icons/hdx.ico' />
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.11/c3.min.css"/>
+    <link href='css/styles.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+
+    <link rel="stylesheet" href="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.11/c3.min.js"></script>
+    
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+
+
+    
+<!--     <script src="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.js"></script> -->
+    <script src="https://unpkg.com/multiple-select@1.5.2/dist/multiple-select.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class='loader'>
+      <div class="sp sp-circle"></div>
+      Loading data...
+    </div>
+
+    <main class="masterhead">
+      <nav class="navbar" role="navigation">
+        <h1>Dashboard épidémiologique - Burkina Faso</h1>
+      </nav>
+      <div class="master">
+        <div class="sidebar">
+          
+          <div class="filters">
+            
+            <div class="dateRange filtre">
+              <h2>Séléction de dates</h2>
+                <select id="from"></select>
+                <span class="semA">à</span>
+                <select id="to" ></select>
+            </div>
+            
+            <div class="regionSelection filtre">
+              <h2>Séléction région</h2>
+              <select id="selectRegion"  multiple="multiple"></select>
+            </div>
+            <div class="maladieSelect filtre">
+              <h2>Séléction maladies</h2>
+              <select id="selectMaladies"  multiple="multiple"></select>
+            
+            </div>
+
+            <button type="button" class="btn btn-outline-primary" id="update">Mettre à jour</button>
+
+            <button type="button" class="btn btn-outline-danger" id="reset">Réinitialiser</button>
+            <div class="source">
+              <div id="datasource">
+                <p>
+                Cette visualisation de données utilise le jeu de données de l'Organisation Mondiale pour la Santé au Burkina Faso partagé sur la plateforme HDX. <a href="https://data.humdata.org/dataset/donnees-epidemiologiques-tloh" target="blank">Voir les données</a>
+              </p> 
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- master content -->
+        <div class="master-content">
+          
+          <div class="allCharts">
+            
+            <div class="flex-item">
+              <h2>Chiffres clées</h2>
+              <div class="key-Figures"></div>
+            </div>
+
+            <div class="flex-item">
+              <div class="charts-cas"></div>
+              <div class="charts-deces"></div>
+            </div>
+
+          </div>
+
+          <div class="rightSide">
+            <div class="flex-item">
+              <h2>Nombre total de cas par région</h2>
+              <div id="regionchart"></div>
+            </div>
+
+            <div class="flex-item">
+              <h2>Nombre total de décès par région</h2>
+              <div id="map"></div>
+              <p class="small">Les frontières, les noms indiqués et les désignations employées sur cette carte n'impliquent pas une reconnaissance ou une acceptation officielle des Nations Unies.</p>
+            </div> 
+
+          </div>
+
+          <div class="district">
+            <h2>Nombre de cas et de décès par district</h2>
+            <div class="clarification">
+                  Cliquer sur une région à partir de la carte pour générer les graphes des districts correspondants.
+            </div>
+            <div class="charts-districts">
+              <h2></h2>
+              <select name="" id="districts"></select>
+            </div>
+            <div id="distCharts"></div>
+          </div>
+        </div>
+        <!-- master content -->
+      </div>
+      
+      <!-- footer 
+      <div class="footer">
+        <h2>Footer</h2>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto earum optio temporibus illum qui eum aliquam iure laudantium beatae dignissimos consequatur dicta rerum, odit culpa nihil quam placeat recusandae! Debitis.
+      </div>
+       footer -->
+    </main>
+
+    <script type='text/javascript' src='js/bundle.min.js'></script>
+  </body>
+</html>
