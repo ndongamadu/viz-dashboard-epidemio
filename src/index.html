@@ -43,28 +43,26 @@
 
     <main class="masterhead">
       <nav class="navbar" role="navigation">
-        <h1>Dashboard epidemiologique Burkina Faso</h1>
+        <h1>Dashboard épidémiologique - Burkina Faso</h1>
       </nav>
       <div class="master">
         <div class="sidebar">
           
           <div class="filters">
             
-            <div class="dateRange">
-              <h2>Selection de dates</h2>
+            <div class="dateRange filtre">
+              <h2>Séléction de dates</h2>
                 <select id="from"></select>
-                à
+                <span class="semA">à</span>
                 <select id="to" ></select>
-              <!-- <div class="clarification"></div> -->
             </div>
-
             
-            <div class="regionSelection">
-              <h2>Selection région</h2>
+            <div class="regionSelection filtre">
+              <h2>Séléction région</h2>
               <select id="selectRegion"  multiple="multiple"></select>
             </div>
-            <div class="maladieSelect">
-              <h2>Selection maladies</h2>
+            <div class="maladieSelect filtre">
+              <h2>Séléction maladies</h2>
               <select id="selectMaladies"  multiple="multiple"></select>
             
             </div>
@@ -72,6 +70,14 @@
             <button type="button" class="btn btn-outline-primary" id="update">Mettre à jour</button>
 
             <button type="button" class="btn btn-outline-danger" id="reset">Réinitialiser</button>
+            <div class="source">
+              <div id="datasource">
+                <p>
+                Cette visualisation de données utilise le jeu de données de l'Organisation Mondiale pour la Santé au Burkina Faso partagé sur la plateforme HDX. <a href="https://data.humdata.org/dataset/donnees-epidemiologiques-tloh" target="blank">Voir les données</a>
+              </p> 
+              </div>
+
+            </div>
 
           </div>
         </div>
@@ -81,15 +87,13 @@
           <div class="allCharts">
             
             <div class="flex-item">
-              <h2>Covid-19, Palu et Meningite - niveau national</h2>
+              <h2>Chiffres clées</h2>
               <div class="key-Figures"></div>
             </div>
 
             <div class="flex-item">
-              <h2>Nombre de cas et de dècés à travers le temps</h2>
               <div class="charts-cas"></div>
               <div class="charts-deces"></div>
-              <div class="charts-letalite"></div>
             </div>
 
           </div>
@@ -103,6 +107,7 @@
             <div class="flex-item">
               <h2>Nombre total de décès par région</h2>
               <div id="map"></div>
+              <p class="small">Les frontières, les noms indiqués et les désignations employées sur cette carte n'impliquent pas une reconnaissance ou une acceptation officielle des Nations Unies.</p>
             </div> 
 
           </div>
@@ -112,18 +117,22 @@
             <div class="clarification">
                   Cliquer sur une région à partir de la carte pour générer les graphes des districts correspondants.
             </div>
-            <div class="charts-districts"></div>
+            <div class="charts-districts">
+              <h2></h2>
+              <select name="" id="districts"></select>
+            </div>
+            <div id="distCharts"></div>
           </div>
         </div>
         <!-- master content -->
       </div>
       
-      <!-- footer -->
+      <!-- footer 
       <div class="footer">
         <h2>Footer</h2>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto earum optio temporibus illum qui eum aliquam iure laudantium beatae dignissimos consequatur dicta rerum, odit culpa nihil quam placeat recusandae! Debitis.
       </div>
-      <!-- footer -->
+       footer -->
     </main>
 
     <script type='text/javascript' src='js/bundle.min.js'></script>

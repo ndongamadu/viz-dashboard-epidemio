@@ -14,6 +14,7 @@ $( document ).ready(function() {
   let weekMax = 0;
 
   let weekScale = ['x'];
+  let semaines = [];
 
   let filteredEpidemioData;
 
@@ -41,7 +42,7 @@ $( document ).ready(function() {
       weekMax = d3.max(epidemioData, function(d){
         return d['NSEM'];
       });
-
+      weekTo = weekMax;
 
       data[1].forEach( function(element, index) {
         maladiesList.push(element.Maladies);
@@ -96,7 +97,7 @@ $( document ).ready(function() {
   // Creer les filtres du sidebar
   function filtresSetter (argument) {
 
-    var semaines = [];
+    
     for (var i = 1; i <= weekMax; i++) {
       semaines.push("semaine "+i);
     };
@@ -167,7 +168,11 @@ $( document ).ready(function() {
       selectAll: true
     });
 
-    
+
+    $("#districts").multipleSelect({
+      displayValues: true
+    });
+
   }//filtresSetter
 
 
@@ -193,8 +198,8 @@ $( document ).ready(function() {
     casesArrColumns.unshift(weekScale);
     deathArrColumns.unshift(weekScale);
 
-    createLineCharts(casesArrColumns, 'charts-cas');
-    createLineCharts(deathArrColumns, 'charts-deces');
+    createLineCharts(casesArrColumns, 'charts-cas', 'Nombre de cas sur la période séléctionnée');
+    createLineCharts(deathArrColumns, 'charts-deces', 'Nombre de dècés sur la période séléctionnée');
     KeyFiguresSetter([totalCas, totolDeces]);
 
   } //drawCharts
@@ -403,8 +408,7 @@ $( document ).ready(function() {
       return d[mld + " " +'Cas'];
     });
 
-    console.log(casData)
-    console.log(deathData);
+
   }//checkedDistrictData
 
   function drawDistrictCharts (region) {
@@ -412,22 +416,40 @@ $( document ).ready(function() {
     var data = regionChartData.filter(function(d){
       return d['REGION'] == region;
     });
-
-    $('.charts-districts').html('<h2>Région: '+region+'</h2>');
-    $('.charts-districts').append('<div class="row" id="'+region+'"></div>');
-    
-    districts = regionAndDistrictsMap[region].districts;
+    var districts = regionAndDistrictsMap[region].districts;
     
     districts.sort();
 
-    for (var i = 0; i < districts.length; i++) {
-      var data = getDistrictDataAll(districts[i]);
-      var deathName = "chart_deces"+i;
-      var casName = "chart_cas"+i;
+    $('.charts-districts h2').text('Région '+region+' - District de ');
+    
+    $('#districts').children('option').remove();
 
-      $('#'+region).append('<div class="districtChart col-md-4"><div class="chart-header"><h4><span>District '+districts[i]+'</span></h4></div><div class="chart-container"><div id="'+casName+'"></div><div id="'+deathName+'"></div></div></div>');
-      createDistrictDecesChart(data[0], deathName);
-      createDistrictCasChart(data[1], casName);
+    var dropdwnDistrict = d3.select("#districts")
+        .selectAll("option")
+        .data(districts)
+        .enter().append("option")
+          .text(function(d){ return d; })
+          .attr("value", function(d){ return d; });
+    
+    $("#districts").multipleSelect('refresh');
+    
+    var selectedDist = $('#districts').val();
+    getDistrictDataAll(data, selectedDist);
+
+    $("#districts").on('change', function(d){
+      var dist = $('#districts').val();
+      getDistrictDataAll(data, dist);
+    });
+    // for (var i = 0; i < districts.length; i++) {
+    //   checkedDistrictData();
+
+    //   var data = getDistrictDataAll(districts[i]);
+    //   var deathName = "chart_deces"+i;
+    //   var casName = "chart_cas"+i;
+
+    //   $('#'+region).append('<div class="districtChart col-md-4"><div class="chart-header"><h4><span>District '+districts[i]+'</span></h4></div><div class="chart-container"><div id="'+casName+'"></div><div id="'+deathName+'"></div></div></div>');
+    //   createDistrictDecesChart(data[0], deathName);
+    //   createDistrictCasChart(data[1], casName);
 
       // if (!doNotDraw(data)) {
       //   console.log("region "+region)
@@ -442,15 +464,18 @@ $( document ).ready(function() {
       //   createDistrictCasChart(data[1], casName);
       // }
 
-    }
+    // }
 
   } //drawDistrictCharts
 
-  function getDistrictDataAll (district) {
-    var subdata = filteredEpidemioData.filter(function(d){
+  function getDistrictDataAll (data, district) {
+    var subdata = data.filter(function(d){
       return d['DISTRICT'] == district ;
     });
-    console.log(subdata)
+
+    var pop = d3.max(subdata, function(d){
+      return d['POP'];
+    });
 
     var allDecesArr = [],
         allCasArr = [];
@@ -463,8 +488,16 @@ $( document ).ready(function() {
        allDecesArr.push(data[1]);
        allCasArr.push(data[0]);
      } 
-
-    return [allDecesArr, allCasArr];
+    var deathName = "chart_deces";
+    var casName = "chart_cas";
+    $('#distCharts').html('');
+    // $('#distCharts').append('<div class="grid-item pop"><div class="content"><div id="population">'+d3.format(",")(pop)+'</div><div classe="title">population totale</div></div></div>');
+    $('#distCharts').append('<div class="grid-item"><div class="chart-container"><div id="'+casName+'"></div></div></div>');
+    $('#distCharts').append('<div class="grid-item"><div class="chart-container"><div id="'+deathName+'"></div></div></div>');
+    
+    createDistrictDecesChart(allDecesArr, deathName);
+    createDistrictCasChart(allCasArr, casName);
+    // return [allDecesArr, allCasArr];
     
   }//getDistrictDataAll
 
@@ -556,6 +589,20 @@ $( document ).ready(function() {
   getData();
 
   $('#update').on('click', function(d){
+    update();
+  });
+  
+  $('#reset').on('click', function(d){
+    $('#from').val(semaines[0])
+    $('#to').val(semaines[semaines.length - 1]);
+    $('#to').multipleSelect('refresh');
+    $('#from').multipleSelect('refresh');
+    
+    $("#selectRegion").val("Centre");
+    $("#selectRegion").multipleSelect('refresh');
+
+    $("#selectMaladies").val(['Covid-19', 'Paludisme Grave', 'Méningite']);
+    $("#selectMaladies").multipleSelect('refresh');
     update();
   });
 

@@ -14,21 +14,21 @@ body {
 	color: #000;
 	font-family: 'Source Sans Pro', sans-serif;
 	font-size: 14px;
-	line-height: 15px;
-	margin: 10px ;
-	padding: 0;
+	
 }
 
 h1 {
-	font-size: 26px;
+	font-size: 20px;
 	font-weight: normal;
 	padding: 0;
 }
 
 h2 {
+	font-family: 'Source Sans Pro', sans-serif;
 	font-size: 16px;
-	font-weight: normal;
-	padding: 0;
+	font-weight: 600;
+	padding-top: 5px;
+	margin-bottom: 5px;
 }
 
 main{
@@ -46,6 +46,7 @@ main{
 	background-color: #EBEBEB;
 	display: flex;
   	justify-content: center;
+  	padding: 0;
 }
 
 .master{
@@ -63,9 +64,18 @@ main{
 .filters {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
 }
 
+.semA {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.filtre {
+	padding-bottom: 20px;
+}
+.btn {
+	margin-bottom: 20px;
+}
 .master-content {
 	flex: 1 1 auto;
 	display: grid;
@@ -94,21 +104,18 @@ main{
 .inner .title{
 	padding-top: 5px;
 	padding-bottom: 10px;
-	font-size: 21px;
-	line-height: 21px;
+	font-size: 20px;
+	line-height: 20px;
 
 }
 
 .num {
 	/**color: #000; **/
-	font-size: 40px;
-	line-height: 40px;
+	font-size: 30px;
+	line-height: 30px;
 	margin-right: 5px;
 }
 
-.dateRange {
-	margin-bottom: 5px;
-}
 
 .selection {
 	font-size: 14px;
@@ -129,7 +136,7 @@ main{
 }
 
 #map{
-	height: 400px;
+	height: 300px;
 }
 
 .district{
@@ -137,23 +144,10 @@ main{
 }
 
 
-
-.chart-header {
-    background-color: #EBEBEB;
-    display: inline-block;
-    margin-bottom: 0;
-    padding: 5px;
-    width: 100%;
-}
-.chart-header h4 span {
-    font-size: 15px;
-    text-transform: uppercase;
-}
-
 .chart-container {
     border: 1px solid #e6e7e8;
     padding: 5px 0 10px;
-    margin-bottom: 15px;
+    margin-top: 5px;
 }
 
 footer {
@@ -161,6 +155,32 @@ footer {
 	color: #FFF;
 	padding: 20px 0 10px;
 }
+
+.charts-districts {
+	display: flex;
+	gap: 10px;
+}
+
+.charts-districts h2 {
+	margin-bottom: 0;
+}
+
+#distCharts{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 10px;
+}
+
+.pop {
+	justify-content: center;
+}
+
+content {
+	text-align: center;
+	font-size: 40px;
+	line-height: 40px;
+}
+
 
 @media only screen and (max-width: 768px) {
 	.master, .master-content {
@@ -174,7 +194,10 @@ footer {
 	.sidebar {
 		flex: 1 1 auto;
 	}
-
+	#distCharts{
+		grid-column: 1 / -1;
+		grid-template-columns: 1fr;
+	}
 }
 
 

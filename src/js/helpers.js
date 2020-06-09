@@ -115,7 +115,7 @@ function calcPercentage (regionlist) {
 function createDistrictDecesChart (data, place) {
   var chart = c3.generate({
       bindto: '#' +place,
-      size: {height: 140},
+      size: {height: 120},
       title: {
         text: 'Nombre de dècés',
         position: 'upper-left'
@@ -156,7 +156,7 @@ function createDistrictDecesChart (data, place) {
 function createDistrictCasChart (data, place) {
   var chart = c3.generate({
       bindto: '#' +place,
-      size: {height: 140},
+      size: {height: 120},
       title: {
         text: 'Nombre de Cas',
         position: 'upper-left'
