@@ -7,7 +7,7 @@ $( document ).ready(function() {
   let maladiesList = [];
   
   // let maladiesSelectionnees = ['Paludisme Grave'];
-  let maladiesSelectionnees = ['Covid-19', 'Paludisme Grave', 'Méningite'];
+  let maladiesSelectionnees = ['Covid-19', 'Paludisme Grave', 'Dengue'];
   
   let weekFrom = 1,
       weekTo = 16;
@@ -601,7 +601,7 @@ $( document ).ready(function() {
     $("#selectRegion").val("Centre");
     $("#selectRegion").multipleSelect('refresh');
 
-    $("#selectMaladies").val(['Covid-19', 'Paludisme Grave', 'Méningite']);
+    $("#selectMaladies").val(['Covid-19', 'Paludisme Grave', 'Dengue']);
     $("#selectMaladies").multipleSelect('refresh');
     update();
   });

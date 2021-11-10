@@ -35,6 +35,7 @@ main{
 	opacity: 0;
 	/* padding: 0 0 15px 15px; */
 	padding: 0 5px 0 5px;
+
 }
 
 .masterhead {
@@ -181,8 +182,12 @@ content {
 	line-height: 40px;
 }
 
+@media only screen and (min-width: 768px) {
 
-@media only screen and (max-width: 768px) {
+}
+
+
+@media only screen and (max-width: 767px) {
 	.master, .master-content {
 		flex-direction: column;
 	}
